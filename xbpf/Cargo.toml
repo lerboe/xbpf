@@ -8,6 +8,7 @@ authors.workspace = true
 repository.workspace = true
 readme.workspace = true
 keywords.workspace = true
+categories.workspace = true
 
 [dependencies]
 glob = { version = "0.3.4", optional = true }
