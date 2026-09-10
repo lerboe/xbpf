@@ -239,9 +239,15 @@ impl Builder {
         args
     }
 
-    /// Returns the directory of `path` relative to the first `src` component
-    /// in it, or [`None`] if it has none.
+    /// Returns the directory of `path` relative to the `src` directory of the
+    /// crate being built, or [`None`] if it isn't below one.
     fn path_relative_to_src(path: &Path) -> Option<&Path> {
+        // The crate root is stripped off first, because it can carry a `src`
+        // component of its own.
+        let path = Builder::manifest_dir()
+            .and_then(|root| path.strip_prefix(root).ok())
+            .unwrap_or(path);
+
         let mut components = path.components();
         for c in &mut components {
             if c.as_os_str() == "src" {
@@ -708,6 +714,49 @@ mod tests {
         builder.sources_with_suffix("bpf.c");
 
         assert_eq!(builder.pattern, default);
+    }
+
+    #[test]
+    fn mirrors_the_layout_a_source_has_below_the_crate_src() {
+        let root = "/home/beekeeper/hive";
+        let rel = temp_env::with_var("CARGO_MANIFEST_DIR", Some(root), || {
+            let file = PathBuf::from(root).join("src/h1/parser.bpf.c");
+            Builder::path_relative_to_src(&file).map(PathBuf::from)
+        });
+
+        assert_eq!(rel, Some(PathBuf::from("h1")));
+    }
+
+    #[test]
+    fn ignores_the_src_directory_of_a_registry_checkout() {
+        let root =
+            "/home/beekeeper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hive-0.1.0";
+        let rel = temp_env::with_var("CARGO_MANIFEST_DIR", Some(root), || {
+            let file = PathBuf::from(root).join("src/h1/parser.bpf.c");
+            Builder::path_relative_to_src(&file).map(PathBuf::from)
+        });
+
+        assert_eq!(rel, Some(PathBuf::from("h1")));
+    }
+
+    #[test]
+    fn keeps_a_source_in_the_crate_src_at_the_root() {
+        let root = "/home/beekeeper/hive";
+        let rel = temp_env::with_var("CARGO_MANIFEST_DIR", Some(root), || {
+            let file = PathBuf::from(root).join("src/parser.bpf.c");
+            Builder::path_relative_to_src(&file).map(PathBuf::from)
+        });
+
+        assert_eq!(rel, Some(PathBuf::new()));
+    }
+
+    #[test]
+    fn resolves_a_source_given_relative_to_the_crate_root() {
+        let rel = temp_env::with_var("CARGO_MANIFEST_DIR", Some("/home/beekeeper/hive"), || {
+            Builder::path_relative_to_src(Path::new("src/h1/parser.bpf.c")).map(PathBuf::from)
+        });
+
+        assert_eq!(rel, Some(PathBuf::from("h1")));
     }
 
     #[test]
