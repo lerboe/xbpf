@@ -7,7 +7,7 @@ license = "MIT"
 authors = [
     "lerboe <mail@laurinbrandner.ch>",
 ]
-repository = "https://github.com/lerboe/bpf"
+repository = "https://github.com/lerboe/xbpf"
 readme = "README.md"
 keywords = ["ebpf", "bpf", "libbpf", "linux"]
 description = "An ergonomic and light-weight eBPF library"
