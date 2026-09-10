@@ -1,6 +1,6 @@
 [package]
 name = "xbpf"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2024"
 description.workspace = true
 license.workspace = true
