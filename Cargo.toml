@@ -11,4 +11,4 @@ repository = "https://github.com/lerboe/xbpf"
 readme = "README.md"
 keywords = ["ebpf", "bpf", "libbpf", "linux"]
 description = "An ergonomic and light-weight eBPF library"
-categories = ["network-programming"]
+categories = ["os", "os::linux-apis", "network-programming"]
