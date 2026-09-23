@@ -10,6 +10,8 @@
 [gpl-url]: LICENSE
 [actions-badge]: https://github.com/lerboe/xbpf/actions/workflows/ci.yml/badge.svg
 [actions-url]: https://github.com/lerboe/xbpf/actions/workflows/ci.yml
+[libbpf-url]: https://docs.rs/libbpf-rs/latest/libbpf_rs/
+[aya-url]: https://docs.rs/aya/latest/aya/
 
 <p align="center">
     <img src="https://github.com/lerboe/xbpf/raw/main/xbpf.png" alt="xbpf" width="500">
@@ -31,11 +33,11 @@ eBPF can be a bit of a footgun: Building, loading, and managing eBPF programs is
 
 ## Why
 
-xBPF is comparable to [aya](https://aya-rs.dev/), but requires you to write your eBPF code in C, rather than Rust. In my opinion, implementing eBPF with Rust makes things unnecessarily complicated. eBPF is hard because [it's verified](https://docs.kernel.org/bpf/verifier.html). Using Rust in this case might seem convenient, but does not help the kernel verify your programs. 
+xBPF is comparable to [aya][aya-url], but requires you to write your eBPF code in C, rather than Rust. In my opinion, implementing eBPF with Rust makes things unnecessarily complicated. eBPF is hard because [it's verified](https://docs.kernel.org/bpf/verifier.html). Using Rust in this case might seem convenient, but does not help the kernel verify your programs. 
 
-But alternatives like [libbpf-rs](https://github.com/libbpf/libbpf-rs) are much more low level. Using it can be a pretty steep learning curve.
+But alternatives like [libbpf-rs][libbpf-url] are much more low level. Using it can be a pretty steep learning curve.
 
-xBPF closes this gap by building on top of [libbpf-rs](https://github.com/libbpf/libbpf-rs) to provide a more user-friendly eBPF ecosystem for Rust.
+xBPF closes this gap by building on top of [libbpf-rs][libbpf-url] to provide a more user-friendly eBPF ecosystem for Rust.
 
 ## License
 This project is licensed under the [MIT license](LICENSE).
