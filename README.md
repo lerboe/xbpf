@@ -22,6 +22,13 @@ eBPF can be a bit of a footgun: Building, loading, and managing eBPF programs is
 > [!NOTE]
 > xBPF is still very much WIP. Feel free to open issues if you find bugs or have a feature request!
 
+## Use Cases
+
+* **Building**: Build eBPF programs with ease, export C headers to persistent path where your IDE can find them. 
+* **Tracing**: xBPF's tracing facility conveniently integrates into [tracing](https://docs.rs/tracing/latest/tracing/). 
+* **Collections**: Use type-safe collections to avoid boilerplate conversion code and common pitfalls.
+* **Testing**: Write eBPF unit tests and integrate them directly into your Rust test suite.
+
 ## Why
 
 xBPF is comparable to [aya](https://aya-rs.dev/), but requires you to write your eBPF code in C, rather than Rust. In my opinion, implementing eBPF with Rust makes things unnecessarily complicated. eBPF is hard because [it's verified](https://docs.kernel.org/bpf/verifier.html). Using Rust in this case might seem convenient, but does not help the kernel verify your programs. 
