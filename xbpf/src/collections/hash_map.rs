@@ -14,7 +14,10 @@
 //! assert_eq!(map.get(&1)?, Some(42));
 //! # Ok::<(), libbpf_rs::Error>(())
 //! ```
-use crate::libbpf::{self, Error, ErrorKind, MapCore, MapFlags, MapHandle, MapType};
+use crate::{
+    Pod,
+    libbpf::{self, Error, ErrorKind, MapCore, MapFlags, MapHandle, MapType},
+};
 use std::{
     ffi::OsStr,
     fmt, io,
@@ -26,28 +29,6 @@ use std::{
 };
 
 type Result<T> = libbpf::Result<T>;
-
-/// A trait for types that can be copied byte-for-byte into and out of an
-/// eBPF map.
-///
-/// # Safety
-///
-/// Implementors must guarantee that the type has no padding bytes, is valid
-/// for any bit pattern of its size, and matches the memory layout of the C
-/// type used on the eBPF side of the map.
-pub unsafe trait Pod: Copy + 'static {}
-
-macro_rules! impl_pod {
-    ($($t:ty),* $(,)?) => {
-        $(unsafe impl Pod for $t {})*
-    };
-}
-
-impl_pod!(
-    u8, i8, u16, i16, u32, i32, u64, i64, u128, i128, usize, isize, f32, f64
-);
-
-unsafe impl<T: Pod, const N: usize> Pod for [T; N] {}
 
 fn pod_slice_bytes<T: Pod>(items: &[T]) -> &[u8] {
     // SAFETY: `T: Pod` guarantees no padding and array elements are laid out

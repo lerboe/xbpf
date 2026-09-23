@@ -12,3 +12,6 @@ tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
 [build-dependencies]
 xbpf = { path = "../xbpf", features = ["tracing-source-loc"] }
+
+[dev-dependencies]
+xbpf = { path = "../xbpf", features = ["test"] }

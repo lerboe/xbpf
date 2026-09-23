@@ -120,6 +120,8 @@
 //! * `tracing-source-loc` — makes every event carry the file and line of the
 //!   macro that emitted it, at the cost of a larger event. See
 //!   [`build::tracing_str_len_args`].
+//! * `test` — the [`mod@test`] module and the [`macro@test`] attribute, which
+//!   run `BPF_PROG_TYPE_SYSCALL` programs from Rust tests.
 //!
 //! [`libbpf`]: libbpf_rs
 //! [`tracing`]: https://github.com/tokio-rs/tracing
@@ -135,6 +137,9 @@ pub use libbpf_rs as libbpf;
 mod obj;
 pub use obj::OpenObject;
 
+mod pod;
+pub use pod::Pod;
+
 mod prog;
 pub use prog::Program;
 
@@ -143,6 +148,11 @@ pub mod collections;
 
 #[cfg(feature = "tracing")]
 pub mod tracing;
+
+#[cfg(feature = "test")]
+pub mod test;
+#[cfg(feature = "test")]
+pub use xbpf_macros::test;
 
 #[cfg(feature = "build")]
 pub mod build;

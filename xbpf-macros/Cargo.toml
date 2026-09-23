@@ -1,0 +1,20 @@
+[package]
+name = "xbpf-macros"
+version = "0.0.3"
+edition = "2024"
+description = "Procedural macros for xbpf"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[lib]
+proc-macro = true
+test = false
+doctest = false
+
+[dependencies]
+proc-macro2 = "1.0.107"
+quote = "1.0.47"
+syn = { version = "2.0.119", features = ["full"] }

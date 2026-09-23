@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["xbpf", "example"]
+members = ["xbpf", "xbpf-macros", "example"]
 
 [workspace.package]
 license = "MIT"

@@ -939,6 +939,16 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "xbpf-macros",
+]
+
+[[package]]
+name = "xbpf-macros"
+version = "0.0.3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
