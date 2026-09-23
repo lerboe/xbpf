@@ -1,6 +1,6 @@
 [package]
 name = "xbpf"
-version = "0.0.3"
+version = "0.0.4"
 edition = "2024"
 description.workspace = true
 license.workspace = true
@@ -17,7 +17,7 @@ libbpf-rs = "0.27.0"
 tokio = { version = "1.53.1", features = ["sync"], optional = true }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"], optional = true }
-xbpf-macros = { path = "../xbpf-macros", version = "0.0.3", optional = true }
+xbpf-macros = { path = "../xbpf-macros", version = "0.0.4", optional = true }
 
 [dev-dependencies]
 temp-env = "0.3.6"

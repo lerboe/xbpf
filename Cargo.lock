@@ -929,7 +929,7 @@ dependencies = [
 
 [[package]]
 name = "xbpf"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "glob",
  "libbpf-cargo",
@@ -944,7 +944,7 @@ dependencies = [
 
 [[package]]
 name = "xbpf-macros"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "proc-macro2",
  "quote",
