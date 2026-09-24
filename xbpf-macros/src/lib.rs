@@ -49,7 +49,7 @@ pub fn test(attr: TokenStream, item: TokenStream) -> TokenStream {
 
             let mut __xbpf_obj = ::xbpf::OpenObject::new();
             let __xbpf_skel = {
-                use ::xbpf::libbpf::skel::{OpenSkel, SkelBuilder};
+                use ::xbpf::libbpf_rs::skel::{OpenSkel, SkelBuilder};
                 #bpf::#builder::default()
                     .open(&mut __xbpf_obj)
                     .and_then(|skel| skel.load())

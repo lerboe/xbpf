@@ -39,7 +39,7 @@
 //!
 //! ```no_run
 //! # use std::mem::MaybeUninit;
-//! # use xbpf::libbpf::{
+//! # use xbpf::libbpf_rs::{
 //! #     Object, ObjectBuilder, OpenObject as LibbpfOpenObject, Result, libbpf_sys,
 //! #     skel::{OpenSkel, Skel, SkelBuilder},
 //! # };
@@ -98,7 +98,7 @@
 //! #     }
 //! # }
 //! #
-//! # fn main() -> xbpf::libbpf::Result<()> {
+//! # fn main() -> xbpf::libbpf_rs::Result<()> {
 //! use xbpf::{OpenObject, Program};
 //!
 //! // Brings `SyscallTraceSkelBuilder` into scope.
@@ -132,7 +132,7 @@ pub use libbpf_cargo;
 
 /// The eBPF bindings xBPF is built on, re-exported so that dependents don't
 /// have to track its version themselves.
-pub use libbpf_rs as libbpf;
+pub use libbpf_rs;
 
 mod obj;
 pub use obj::OpenObject;

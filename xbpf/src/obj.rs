@@ -1,5 +1,5 @@
 //! Storage for the eBPF object a skeleton is opened into.
-use crate::libbpf;
+use crate::libbpf_rs;
 use std::{
     mem::MaybeUninit,
     ops::{Deref, DerefMut},
@@ -7,7 +7,7 @@ use std::{
 
 /// The uninitialized storage a skeleton is opened into.
 ///
-/// Opening a skeleton writes the [`libbpf::OpenObject`] into memory the caller
+/// Opening a skeleton writes the [`libbpf_rs::OpenObject`] into memory the caller
 /// provides, and the loaded skeleton borrows from it, so the storage has to
 /// outlive the skeleton. This is a named place to put it that dereferences to
 /// the [`MaybeUninit`] libbpf expects and, unlike it, can be moved across
@@ -23,7 +23,7 @@ use std::{
 /// // as the program is loaded.
 /// ```
 pub struct OpenObject {
-    inner: MaybeUninit<libbpf::OpenObject>,
+    inner: MaybeUninit<libbpf_rs::OpenObject>,
 }
 
 impl OpenObject {
@@ -36,7 +36,7 @@ impl OpenObject {
 }
 
 impl Deref for OpenObject {
-    type Target = MaybeUninit<libbpf::OpenObject>;
+    type Target = MaybeUninit<libbpf_rs::OpenObject>;
 
     fn deref(&self) -> &Self::Target {
         &self.inner
@@ -49,7 +49,7 @@ impl DerefMut for OpenObject {
     }
 }
 
-// SAFETY: the storage is either uninitialized or holds a `libbpf::OpenObject`,
+// SAFETY: the storage is either uninitialized or holds a `libbpf_rs::OpenObject`,
 // which is itself `Send`: it owns nothing but a pointer to the `bpf_object`
 // libbpf allocated, and that pointer isn't tied to the thread that opened it.
 unsafe impl Send for OpenObject {}

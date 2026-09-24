@@ -1,5 +1,5 @@
 //! A typed `HashMap<K, V>` backed by an eBPF hash map, built on top of
-//! [`libbpf::MapHandle`].
+//! [`libbpf_rs::MapHandle`].
 //!
 //! [`MapHandle`] owns a duplicated file descriptor rather than borrowing from
 //! a skeleton, so [`HashMap`] can be constructed from a loaded skeleton map
@@ -16,7 +16,7 @@
 //! ```
 use crate::{
     Pod,
-    libbpf::{self, Error, ErrorKind, MapCore, MapFlags, MapHandle, MapType},
+    libbpf_rs::{self, Error, ErrorKind, MapCore, MapFlags, MapHandle, MapType},
 };
 use std::{
     ffi::OsStr,
@@ -28,7 +28,7 @@ use std::{
     ptr, slice,
 };
 
-type Result<T> = libbpf::Result<T>;
+type Result<T> = libbpf_rs::Result<T>;
 
 fn pod_slice_bytes<T: Pod>(items: &[T]) -> &[u8] {
     // SAFETY: `T: Pod` guarantees no padding and array elements are laid out
@@ -111,8 +111,8 @@ impl<K: Pod, V: Pod> HashMap<K, V> {
         name: Option<T>,
         max_entries: u32,
     ) -> Result<Self> {
-        let opts = libbpf::libbpf_sys::bpf_map_create_opts {
-            sz: mem::size_of::<libbpf::libbpf_sys::bpf_map_create_opts>() as _,
+        let opts = libbpf_rs::libbpf_sys::bpf_map_create_opts {
+            sz: mem::size_of::<libbpf_rs::libbpf_sys::bpf_map_create_opts>() as _,
             ..Default::default()
         };
         let handle = MapHandle::create(

@@ -2,7 +2,7 @@
 use anyhow::Result;
 use std::{mem::MaybeUninit, thread::sleep, time::Duration};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use xbpf::{OpenObject, Program, libbpf::skel::Skel};
+use xbpf::{OpenObject, Program, libbpf_rs::skel::Skel};
 
 xbpf::include_bpf!("syscall_trace");
 

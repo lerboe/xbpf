@@ -7,7 +7,6 @@ publish = false
 [dependencies]
 anyhow = "1.0.104"
 xbpf = { path = "../xbpf", features = ["tracing-source-loc"]  }
-libbpf-rs = "0.27.0"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
 [build-dependencies]

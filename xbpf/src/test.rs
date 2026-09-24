@@ -53,7 +53,7 @@
 
 use crate::{
     Pod,
-    libbpf::{Error, Result, libbpf_sys},
+    libbpf_rs::{Error, Result, libbpf_sys},
 };
 use std::{
     io,

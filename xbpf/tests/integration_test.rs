@@ -12,7 +12,7 @@ use tracing::{Level, level_filters::LevelFilter};
 use tracing_subscriber::fmt::MakeWriter;
 use xbpf::{
     build::Builder,
-    libbpf::{ObjectBuilder, ProgramInput},
+    libbpf_rs::{ObjectBuilder, ProgramInput},
 };
 
 /// A `tracing_subscriber` writer that buffers everything in memory instead

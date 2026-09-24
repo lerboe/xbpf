@@ -16,9 +16,9 @@
 //! # Examples
 //!
 //! ```no_run
-//! use xbpf::libbpf::ObjectBuilder;
+//! use xbpf::libbpf_rs::ObjectBuilder;
 //!
-//! # fn main() -> xbpf::libbpf::Result<()> {
+//! # fn main() -> xbpf::libbpf_rs::Result<()> {
 //! tracing_subscriber::fmt()
 //!     .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
 //!     .with_file(true)
@@ -45,7 +45,7 @@
 //! [`tracing`]: https://github.com/tokio-rs/tracing
 use crate::{
     collections::RingBuf,
-    libbpf::{self, MapCore, MapHandle, PrintLevel},
+    libbpf_rs::{self, MapCore, MapHandle, PrintLevel},
 };
 pub use event::{CallsiteKey, Event, Kind};
 use std::{
@@ -88,7 +88,7 @@ thread_local! {
 }
 
 /// Callback for libbpf to print messages to the tracing infrastructure.
-fn print(level: libbpf::PrintLevel, msg: String) {
+fn print(level: libbpf_rs::PrintLevel, msg: String) {
     let msg = msg.trim_start_matches("libbpf:").trim();
 
     match level {
@@ -120,9 +120,9 @@ fn print(level: libbpf::PrintLevel, msg: String) {
 /// not of type `BPF_MAP_TYPE_RINGBUF`.
 ///
 /// [`tracing`]: https://github.com/tokio-rs/tracing
-pub fn try_init(obj: &libbpf::Object) -> libbpf::Result<()> {
-    if libbpf::get_print().is_none() {
-        libbpf::set_print(Some((PrintLevel::Debug, print)));
+pub fn try_init(obj: &libbpf_rs::Object) -> libbpf_rs::Result<()> {
+    if libbpf_rs::get_print().is_none() {
+        libbpf_rs::set_print(Some((PrintLevel::Debug, print)));
     }
 
     let mut events: Option<MapHandle> = None;
@@ -135,7 +135,7 @@ pub fn try_init(obj: &libbpf::Object) -> libbpf::Result<()> {
     }
 
     let Some(events) = events else {
-        return Err(libbpf::Error::from(std::io::Error::new(
+        return Err(libbpf_rs::Error::from(std::io::Error::new(
             std::io::ErrorKind::NotFound,
             "event ring buffer not found",
         )));

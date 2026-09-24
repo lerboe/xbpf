@@ -77,6 +77,7 @@ use tracing_subscriber::{EnvFilter, layer::SubscriberExt, registry::Registry};
 #[macro_export]
 macro_rules! include_bpf {
     ($name:literal) => {
+        use xbpf::libbpf_rs;
         include!(concat!(env!("OUT_DIR"), "/", $name, ".skel.rs"));
     };
 }
@@ -328,7 +329,7 @@ impl Builder {
     ///
     /// Unlike [`Builder::build`] this doesn't generate skeletons, so the
     /// objects have to be loaded at run time, for instance with
-    /// [`crate::libbpf::ObjectBuilder`].
+    /// [`crate::libbpf_rs::ObjectBuilder`].
     ///
     /// # Panics
     ///

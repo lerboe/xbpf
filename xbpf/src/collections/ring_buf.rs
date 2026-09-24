@@ -12,7 +12,7 @@
 //! buffer, and once the channel is full records are dropped from it as well.
 //! [`RingBuf::dropped`] reports how many were lost that way.
 
-use crate::libbpf::{Error, MapCore, MapHandle, MapType, Result, RingBufferBuilder};
+use crate::libbpf_rs::{Error, MapCore, MapHandle, MapType, Result, RingBufferBuilder};
 use std::{
     io,
     marker::PhantomData,
@@ -197,7 +197,7 @@ fn invalid_input<M: Into<Box<dyn std::error::Error + Send + Sync>>>(msg: M) -> E
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::libbpf::libbpf_sys;
+    use crate::libbpf_rs::libbpf_sys;
     use std::{mem::MaybeUninit, time::Instant};
 
     /// A value that is never decoded, the tests only exercise the buffering.

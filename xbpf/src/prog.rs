@@ -1,7 +1,7 @@
 //! Loading of eBPF programs from a generated skeleton.
 use crate::{
     OpenObject,
-    libbpf::{
+    libbpf_rs::{
         Result,
         skel::{OpenSkel, Skel, SkelBuilder},
     },
@@ -54,7 +54,7 @@ impl<'obj, SB: SkelBuilder<'obj, Output = OS>, OS: OpenSkel<'obj, Output = S>, S
     /// rejects one of its programs. With the `tracing` feature it also returns
     /// an error if the object has no `bpf_tracing_events` ring buffer, which is
     /// the case for programs that don't include `xbpf.h`. Load those with
-    /// [`crate::libbpf::ObjectBuilder`] instead.
+    /// [`crate::libbpf_rs::ObjectBuilder`] instead.
     ///
     /// [`tracing`]: https://github.com/tokio-rs/tracing
     pub fn build(builder: SB, obj: &'obj mut OpenObject) -> Result<Program<'obj, SB, OS, S>> {
