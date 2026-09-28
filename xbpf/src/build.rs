@@ -54,10 +54,11 @@ use std::{
     ffi::{OsStr, OsString},
     os::unix::fs::symlink,
     path::{Path, PathBuf},
-    process::Command,
 };
 use tracing::{Dispatch, Level, Metadata, level_filters::LevelFilter};
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, registry::Registry};
+
+mod vmlinux;
 
 /// Includes the generated skeleton for the eBPF program with the given name.
 ///
@@ -458,7 +459,7 @@ pub fn build() {
 ///
 /// # Panics
 ///
-/// Panics if `bpftool` is missing or fails, or if `dst` cannot be written to.
+/// Panics if dumping the kernel BTF fails, or if `dst` cannot be written to.
 pub fn export_headers<P: AsRef<Path>>(hdrs: Option<Vec<P>>, dst: P) {
     let dst = dst.as_ref();
     dump_kernel_btf(dst);
@@ -478,8 +479,8 @@ pub fn export_headers<P: AsRef<Path>>(hdrs: Option<Vec<P>>, dst: P) {
 ///
 /// # Panics
 ///
-/// Panics if `bpftool` is not on `PATH`, if dumping the BTF fails, or if the
-/// header cannot be written.
+/// Panics if the kernel BTF cannot be read or dumped, or if the header cannot
+/// be written.
 pub fn dump_kernel_btf<P: AsRef<Path>>(dir: P) -> PathBuf {
     let dir = dir.as_ref().to_path_buf();
     let vmlinux_path = dir.join("vmlinux.h");
@@ -489,33 +490,14 @@ pub fn dump_kernel_btf<P: AsRef<Path>>(dir: P) -> PathBuf {
         return dir;
     }
 
-    if Command::new("bpftool").arg("--version").output().is_err() {
-        panic!("bpftool is required to dump kernel BTF but was not found on PATH");
-    }
-
-    let output = Command::new("bpftool")
-        .args([
-            "btf",
-            "dump",
-            "file",
-            "/sys/kernel/btf/vmlinux",
-            "format",
-            "c",
-        ])
-        .output()
-        .unwrap_or_else(|e| panic!("Failed to run bpftool: {e}"));
-    if !output.status.success() {
-        panic!(
-            "bpftool btf dump failed: {}",
-            String::from_utf8_lossy(&output.stderr)
-        );
-    }
+    let header = vmlinux::dump_btf_c(Path::new("/sys/kernel/btf/vmlinux"))
+        .unwrap_or_else(|e| panic!("Failed to dump kernel BTF: {e}"));
 
     if std::fs::create_dir_all(&dir).is_err() {
         panic!("Failed to create include directory: {}", dir.display());
     }
 
-    std::fs::write(&vmlinux_path, output.stdout)
+    std::fs::write(&vmlinux_path, header)
         .unwrap_or_else(|e| panic!("Failed to write {:?}: {e}", vmlinux_path));
 
     dir
