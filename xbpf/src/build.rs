@@ -474,7 +474,8 @@ pub fn export_headers<P: AsRef<Path>>(hdrs: Option<Vec<P>>, dst: P) {
 /// Dumps the BTF of the running kernel as a `vmlinux.h` header into `dir` and
 /// returns `dir`, so that it can be passed to clang as an include path.
 ///
-/// Dumping is skipped if the header already exists.
+/// Dumping is skipped if the header already exists. When building on docs.rs
+/// (`DOCS_RS` is set), a bundled `vmlinux.h` is used instead of calling `bpftool`.
 ///
 /// # Panics
 ///
@@ -486,6 +487,17 @@ pub fn dump_kernel_btf<P: AsRef<Path>>(dir: P) -> PathBuf {
 
     // TODO: can we validate whether the existing vmlinux.h is up to date with the running kernel?
     if vmlinux_path.exists() {
+        return dir;
+    }
+
+    // docs.rs builds have no access to the kernel BTF, so fall back to the bundled header.
+    if env::var_os("DOCS_RS").is_some() {
+        if let Err(e) = std::fs::create_dir_all(&dir) {
+            panic!("Failed to create include directory {}: {e}", dir.display());
+        }
+        let bundled = Path::new(env!("CARGO_MANIFEST_DIR")).join("vmlinux/vmlinux.h");
+        std::fs::copy(&bundled, &vmlinux_path)
+            .unwrap_or_else(|e| panic!("Failed to copy {:?}: {e}", bundled));
         return dir;
     }
 
@@ -715,6 +727,16 @@ mod tests {
         builder.sources_with_suffix("bpf.c");
 
         assert_eq!(builder.pattern, default);
+    }
+
+    #[test]
+    fn uses_the_bundled_vmlinux_header_on_docs_rs() {
+        let dir = tempfile::tempdir().unwrap();
+        temp_env::with_vars([("DOCS_RS", Some("1")), ("PATH", Some(""))], || {
+            dump_kernel_btf(dir.path());
+        });
+
+        assert!(dir.path().join("vmlinux.h").exists());
     }
 
     #[test]
