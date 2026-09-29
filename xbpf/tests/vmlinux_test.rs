@@ -5,7 +5,6 @@
 use std::process::Command;
 
 #[test]
-#[ignore = "requires bpftool on PATH"]
 fn dump_kernel_btf_matches_bpftool() {
     let output = Command::new("bpftool")
         .args([
