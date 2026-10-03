@@ -12,9 +12,9 @@ categories.workspace = true
 
 [dependencies]
 glob = { version = "0.3.4", optional = true }
-libbpf-cargo = "0.27.0"
-libbpf-rs = "0.27.0"
-tokio = { version = "1.53.1", features = ["sync"], optional = true }
+libbpf-cargo = "0.27.2"
+libbpf-rs = "0.27.2"
+tokio = { version = "1.53.2", features = ["sync"], optional = true }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"], optional = true }
 xbpf-macros = { path = "../xbpf-macros", version = "0.0.4", optional = true }

@@ -28,6 +28,7 @@ pub fn test(attr: TokenStream, item: TokenStream) -> TokenStream {
         vis,
         sig,
         block,
+        ..
     } = func;
     if !sig.inputs.is_empty() || sig.asyncness.is_some() {
         return Error::new_spanned(
