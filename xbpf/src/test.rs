@@ -53,13 +53,9 @@
 
 use crate::{
     Pod,
-    libbpf_rs::{Error, Result, libbpf_sys},
+    libbpf_rs::{Error, ProgramInput, ProgramMut, Result},
 };
-use std::{
-    io,
-    mem::{self, MaybeUninit},
-    os::fd::{AsFd, AsRawFd},
-};
+use std::{io, mem, slice};
 
 /// Runs the syscall program `prog` on `ctx` and returns `ctx` as the program
 /// left it.
@@ -69,29 +65,21 @@ use std::{
 /// Fails if the kernel rejects the run, or if the program returns anything
 /// other than `0`.
 ///
-pub fn run<T: Pod>(prog: &impl AsFd, ctx: T) -> Result<T> {
-    let mut ctx = MaybeUninit::new(ctx);
+pub fn run<T: Pod>(prog: &ProgramMut<'_>, mut ctx: T) -> Result<T> {
+    // SAFETY: `ctx` is `size_of::<T>()` writable bytes, and `T: Pod` is valid
+    // for whatever the program writes to it.
+    let bytes = unsafe { slice::from_raw_parts_mut((&raw mut ctx).cast(), mem::size_of::<T>()) };
+    let output = prog.test_run(ProgramInput {
+        context_in: Some(bytes),
+        ..Default::default()
+    })?;
 
-    // SAFETY: `bpf_test_run_opts` is a plain C struct, all zeros is its default.
-    let mut opts: libbpf_sys::bpf_test_run_opts = unsafe { mem::zeroed() };
-    opts.sz = mem::size_of_val(&opts) as _;
-    opts.ctx_in = ctx.as_mut_ptr().cast_const().cast();
-    opts.ctx_size_in = mem::size_of::<T>() as _;
-
-    // SAFETY: `ctx_in` points to `size_of::<T>()` writable bytes.
-    let rc = unsafe { libbpf_sys::bpf_prog_test_run_opts(prog.as_fd().as_raw_fd(), &mut opts) };
-    if rc < 0 {
-        return Err(Error::from(io::Error::from_raw_os_error(-rc)));
-    }
-
-    let retval = opts.retval as i32;
+    let retval = output.return_value as i32;
     if retval != 0 {
         return Err(Error::from(io::Error::other(format!(
             "eBPF program returned {retval}"
         ))));
     }
 
-    // SAFETY: `ctx` was initialized, and `T: Pod` is valid for whatever the
-    // program wrote to it.
-    Ok(unsafe { ctx.assume_init() })
+    Ok(ctx)
 }
