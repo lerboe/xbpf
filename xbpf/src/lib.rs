@@ -126,6 +126,9 @@
 //! [`libbpf`]: libbpf_rs
 //! [`tracing`]: https://github.com/tokio-rs/tracing
 
+#[cfg(not(target_os = "linux"))]
+compile_error!("xbpf supports only Linux");
+
 /// The eBPF build tooling [`mod@build`] drives, re-exported so that dependents
 /// don't have to track its version themselves.
 pub use libbpf_cargo;
