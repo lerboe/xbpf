@@ -1,14 +1,3 @@
 [workspace]
 resolver = "2"
 members = ["xbpf", "xbpf-macros", "example"]
-
-[workspace.package]
-license = "MIT"
-authors = [
-    "lerboe <mail@laurinbrandner.ch>",
-]
-repository = "https://github.com/lerboe/xbpf"
-readme = "README.md"
-keywords = ["ebpf", "bpf", "libbpf", "linux"]
-description = "An ergonomic and light-weight eBPF library"
-categories = ["os", "os::linux-apis", "network-programming"]

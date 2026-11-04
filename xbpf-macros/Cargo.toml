@@ -2,12 +2,13 @@
 name = "xbpf-macros"
 version = "0.0.4"
 edition = "2024"
+license = "MIT"
+authors = ["lerboe <mail@laurinbrandner.ch>"]
+repository = "https://github.com/lerboe/xbpf"
+readme = "README.md"
 description = "Procedural macros for xbpf"
-license.workspace = true
-authors.workspace = true
-repository.workspace = true
-keywords.workspace = true
-categories.workspace = true
+categories = ["os", "os::linux-apis", "network-programming"]
+keywords = ["ebpf", "bpf", "libbpf", "linux"]
 
 [lib]
 proc-macro = true
