@@ -24,12 +24,82 @@ eBPF can be a bit of a footgun: Building, loading, and managing eBPF programs is
 > [!NOTE]
 > xBPF is still very much WIP. Feel free to open issues if you find bugs or have a feature request!
 
-## Use Cases
+## Features
 
-* **Building**: Build eBPF programs with ease, export C headers to persistent path where your IDE can find them. 
-* **Tracing**: xBPF's tracing facility conveniently integrates into [tracing](https://docs.rs/tracing/latest/tracing/). 
-* **Collections**: Use type-safe collections to avoid boilerplate conversion code and common pitfalls.
-* **Testing**: Write eBPF unit tests and integrate them directly into your Rust test suite.
+### Tracing
+
+xBPF's tracing facility conveniently integrates into [tracing](https://docs.rs/tracing/latest/tracing/). It is more lightweight than [bpf_trace_printk](https://docs.ebpf.io/linux/helper-function/bpf_trace_printk), and allows you to filter the output with the `RUST_LOG` environment variable.
+
+```c
+SEC("sockops")
+int monitor_sockets(struct bpf_sock_ops *ops) {
+    if (ops->op == BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB || ops->op == BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB) {
+        bpf_start_info_span("sockops");
+
+        bpf_info("Established socket %d", skey.local.port);
+
+        bpf_end_span("sockops");
+    }
+
+    return SK_PASS;
+}
+```
+
+The program above yields the following output:
+```text
+2026-04-20T13:23:27.545062Z  INFO bpf: example/src/monitor.bpf.c:34: sockops
+2026-04-20T13:23:27.545166Z  INFO bpf: example/src/monitor.bpf.c:50: Established socket [127.0.0.1:34812->127.0.0.1:9999]
+2026-04-20T13:23:27.545239Z  INFO bpf: example/src/monitor.bpf.c:60: Add socket [127.0.0.1:34812->127.0.0.1:9999]
+2026-04-20T13:23:27.545345Z  INFO bpf: example/src/monitor.bpf.c:34: sockops
+2026-04-20T13:23:27.545450Z  INFO bpf: example/src/monitor.bpf.c:50: Established socket [127.0.0.1:9999->127.0.0.1:34812]
+```
+
+### Building
+
+xBPF provides you with a simple interface to build your eBPF programs. This eliminates a lot of boilerplate code that is easy to get wrong. In many cases `xbpf::build()` is sufficient to build your program. It looks for all of your eBPF source files, makes sure they are recompiled when they change, dumps `vmlinux.h` with [bpftool](https://bpftool.dev/), and exports C headers to a path which you can point your IDE to. 
+
+In your build script, call `xbpf::build`:
+```rust
+fn main() {
+    xbpf::build();
+}
+```
+
+Then, in your rust code, use `xbpf::include_bpf!` to include your eBPF program:
+```rust
+xbpf::include_bpf!("syscall_trace");
+```
+
+xbpf automatically exports all headers, including `vmlinux.h`, to `target/include`. To make code completion work in your IDE, add the following to your `.clangd` file:
+```yaml
+CompileFlags:
+  Add:
+    - "-I<WORKSPACE_DIR>/target/include"
+```
+
+### Testing
+
+xbpf helps you write unit test for your eBPF programs. Simply declare a `syscall` function in your eBPF code:
+
+```c
+SEC("syscall")
+int test_if_crazy_logic_returns_true(struct args *args) {
+    // crazy logic here
+    return 0;
+}
+```
+
+and call it as follows:
+```rust
+#[xbpf::test(example, test_if_crazy_logic_returns_true)]
+fn test_if_crazy_logic_returns_true() {
+    let args = test_if_crazy_logic_returns_true(types::args { a: 2, b: 3, sum: 0 }).unwrap();
+    assert_eq!(args.sum, 5);
+}
+```
+
+### Colletions
+Use `unsafe`-free collections to avoid boilerplate conversion code and common pitfalls.
 
 ## Why
 
