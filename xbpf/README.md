@@ -70,7 +70,7 @@ Then, in your rust code, use `xbpf::include_bpf!` to include your eBPF program:
 xbpf::include_bpf!("syscall_trace");
 ```
 
-xbpf automatically exports all headers, including `vmlinux.h`, to `target/include`. To make code completion work in your IDE, add the following to your `.clangd` file:
+xBPF automatically exports all headers, including `vmlinux.h`, to `target/include`. To make code completion work in your IDE, add the following to your `.clangd` file:
 ```yaml
 CompileFlags:
   Add:
@@ -79,7 +79,7 @@ CompileFlags:
 
 ### Testing
 
-xbpf helps you write unit test for your eBPF programs. Simply declare a `syscall` function in your eBPF code:
+xBPF helps you write unit test for your eBPF programs. Simply declare a `syscall` function in your eBPF code:
 
 ```c
 SEC("syscall")
